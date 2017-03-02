@@ -1,2 +1,2 @@
 # Coach Hub Prototype
-The prototype of the UWP app Coach Hub.
+The prototype of the sports tutorial platform Coach Hub.
