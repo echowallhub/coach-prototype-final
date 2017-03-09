@@ -1,0 +1,7 @@
+{
+  "name": "Coach API",
+  "version": "0.0.1",
+  "description": "Coach Hub is a sport tutorial platform that supports AR device. Users can enroll in the tutorials on this platform and then view the videos belong to these tutorials on either web browser or Microsoft HoloLens. You can imagine it as a sports version of Udemy. These videos are uploaded by other users who are registered as coaches.",
+  "title": "Coach API",
+  "url" : ""
+}
