@@ -40,40 +40,86 @@ var upload = multer({ storage: storage });
  */
 router.post('/', upload.any(), function (req, res) {
     try {
+        console.log('start processing the video...');
         var process = new ffmpeg(req.files[0].path);
-        process.then(function create_video(video) {
-            var new_video = new Video({
-                name: req.body.name,
-                description: req.body.description,
-                url: req.files[0].path,
-                length_seconds: video.metadata.duration.seconds
+        
+        console.log(req.files[0]);
+        
+        process.then(extract_frames_from_video, function(error){
+            res.status(500).send({
+                is_success: false,
+                msg: String(error)
             });
+        });
 
-            new_video.save(function(error, data){
-                if(error){
+        function extract_frames_from_video(video) {
+            console.log('extract frames from video...');
+            video.fnExtractFrameToJPG('./static/' + req.files[0].filename.split('.')[0], {
+                frame_rate: 0.5,
+                number: 5,
+                file_name: req.files[0].filename
+            }, create_video);
+
+            function create_video(error, files) {
+
+                if (error){
                     res.status(500).send({
                         is_success: false,
                         msg: String(error)
                     });
                 } else {
-                    Tutorial.findByIdAndUpdate(req.body.tutorial_id, {$push: {videos: data._id}}, function (error){
+                    if(files){
+                        for (var i = 0; i < files.length; i++) {
+                            files[i] = files[i].substring(1)
+                        }
+
+                        console.log('created preview pictures: ' + files);
+                    } else {
+                        console.log('no preview pictures created');
+                    }
+
+                    var new_video = new Video({
+                        name: req.body.name,
+                        description: req.body.description,
+                        url: '/' + req.files[0].path,
+                        length_seconds: video.metadata.duration.seconds,
+                        preview_frames_url: files
+                    });
+
+                    new_video.preview_frames_url = files;
+
+                    new_video.save(function(error, data){
                         if(error){
                             res.status(500).send({
                                 is_success: false,
                                 msg: String(error)
                             });
+                        } else {
+                            if(req.body.tutorial_id){
+                                Tutorial.findByIdAndUpdate(req.body.tutorial_id, {$push: {videos: data._id}}, function (error){
+                                    if(error){
+                                        res.status(500).send({
+                                            is_success: false,
+                                            msg: String(error)
+                                        });
+                                    }
+                                    res.send({
+                                        is_success: true,
+                                        video_id: data._id
+                                    })
+                                });
+                            } else {
+                                res.send({
+                                    is_success: true,
+                                    video_id: data._id
+                                })
+                            }
                         }
-                        res.send({
-                            is_success: true,
-                            video_id: data._id
-                        }) 
                     });
                 }
-            });
-
-        }, function (err) {
-            res.status(500).send({msg: err});
-        });
+            }
+        }
+        
     } catch (e) {
         res.status(500).send({msg: e.code + ':' + e.msg});
     }

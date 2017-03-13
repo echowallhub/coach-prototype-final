@@ -26,6 +26,7 @@ var VideoSchema = new mongoose.Schema({
     url: String,
     view_count: {type: Number, default: 0},
     length_seconds: Number,
+    preview_frames_url: [String],
     meta:{
         create_date: Date,
         update_date: Date
