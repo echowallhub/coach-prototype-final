@@ -70,7 +70,8 @@ router.get('/:id', function (req, res) {
     var tutorial_id = req.params.id;
 
     Tutorial.findOne({_id: tutorial_id})
-        .populate('tutor', 'videos')
+        .populate('tutor')
+        .populate('videos')
         .exec(function(error, tutorial){
             if(error){
                 res.status(500).send({

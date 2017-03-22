@@ -43,7 +43,7 @@ var AccountRoles = {
 
 var AccountSchema = new mongoose.Schema({
     _id: {type: String, default: uuid.v4},
-    user_name: {type: String, unique: true, required: true},
+    user_name: {type: String, unique: true, required: true, index:true},
     email: String,
     hashed_password: {type: String, required: true},
     name: String,

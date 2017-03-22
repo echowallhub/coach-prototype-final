@@ -27,6 +27,26 @@ var upload = multer({ storage: storage });
  */
 
 /**
+ * @api {get} /video Retrieve all Video Info
+ * @apiName GetAllInfo
+ * @apiGroup Video
+ *
+ * @apiUse VideoSuccess
+ */
+router.get('/', function (req, res) {
+    Video.find({}, function(error, videos){
+        if(error){
+            res.status(500).send({
+                is_success: false,
+                msg: String(error)
+            });
+        } else {
+            res.send(videos)
+        }
+    })
+});
+
+/**
  * @api {post} /video Upload a Video
  * @apiName PostVideo
  * @apiGroup Video
@@ -193,22 +213,25 @@ router.put('/:id', function (req, res) {
  * @apiUse VideoParam
  *
  * @apiSuccess {Boolean} is_success Request Success
+ * @apiSuccess {Number} view_count Number of views of the video
  */
 router.put('/:id/viewed', function (req, res) {
     var video_id = req.params.id;
     
-    Video.findByIdAndUpdate(video_id, {$inc: {view_count:1}}, function(error){
+    Video.findByIdAndUpdate(video_id, {$inc: {view_count:1}}, {new: true}, function(error, video){
         if(error){
             res.status(500).send({
                 is_success: false,
-                msg: String(error)
+                msg: String(error),
+                view_count: -1
             });
         } else {
             res.send({
-                is_success: true
-            })
+                is_success: true,
+                view_count: video.view_count
+            });
         }
-    })
+    });
 });
 
 /**
