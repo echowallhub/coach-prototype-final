@@ -1,2 +1,2 @@
-# Coach Hub UWP
-The UWP app of Coach Hub.
+# Coach Hub Web
+The Web version of Coach Hub.
