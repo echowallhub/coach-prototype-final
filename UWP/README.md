@@ -1,2 +1,2 @@
-# Coach Hub web
-The web frontend of Coach Hub.
+# Coach Hub UWP
+The UWP version of Coach Hub.
